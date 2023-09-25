@@ -1,5 +1,6 @@
+// models/user.js
 const Sequelize = require('sequelize');
-const sequelize = require('../config'); 
+const sequelize = require('../config');
 
 const User = sequelize.define('user', {
   email: {
@@ -15,9 +16,8 @@ const User = sequelize.define('user', {
     type: Sequelize.STRING,
     allowNull: true,
   }
-}, 
-{
-  tableName: 'users', 
+}, {
+  tableName: 'users',
 });
 
 module.exports = User;

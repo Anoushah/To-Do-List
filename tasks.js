@@ -1,9 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Task = require('./models/task');
-const User = require('./models/user');
-const sequelize = require('./config');
-const authenticateToken = require('./authMiddleware');
 const multer = require('multer');
 const commonRoutes = require('./routes/tasksRoute');
 

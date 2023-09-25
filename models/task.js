@@ -15,13 +15,20 @@ const Task = sequelize.define('task', {
   description: {
     type: Sequelize.TEXT,
   },
-  status: {
-    type: Sequelize.STRING,
-    defaultValue: 'To Do',
-  },
   fileUrl: {
     type: Sequelize.STRING,
     allowNull: true,
+  },
+  dueDateTime: {
+    type: Sequelize.DATE, 
+  },
+  status: {
+    type: Sequelize.STRING,
+    defaultValue: 'false', 
+  },
+  completionDateTime: {
+    type: Sequelize.DATE, 
+    allowNull: true, 
   },
 });
 
@@ -32,7 +39,15 @@ Task.addHook('beforeCreate', async (task, options) => {
   const user = await User.findByPk(task.userId);
   if (user) {
     const tasksCount = await Task.count({ where: { userId: task.userId } });
-    task.taskNumber = tasksCount + 1; 
+    task.taskNumber = tasksCount + 1;
   }
 });
+
+Task.addHook('beforeUpdate', (task, options) => {
+  if (task.changed('status') && task.status === 'true') {
+    task.completionDateTime = new Date();
+  }
+});
+
+
 module.exports = Task;

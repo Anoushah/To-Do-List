@@ -14,7 +14,6 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-// Add this middleware to parse JSON request bodies
 app.use(express.json());
 
 router.post('/login', async (req, res) => {

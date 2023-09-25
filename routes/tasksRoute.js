@@ -7,29 +7,30 @@ const upload = multer({ dest: 'D:/To-Do List/uploads/' });
 const Sequelize = require('sequelize');
 //Create Tasks
 router.post('/tasks', authenticateToken, upload.single('file'), async (req, res) => {
-  const { title, description, status } = req.body;
+  const { title, description, status, dueDateTime } = req.body;
   const userId = req.user.userId;
   const uploadedFile = req.file;
   const fileAbsolutePath = uploadedFile ? uploadedFile.path : null;
   try {
-  const taskCount = await Task.count({where: {userId}});
-  if (taskCount >= 50){
-    return res.status(401).json({error:"You can't have more than 50 tasks"});
-  }
+    const taskCount = await Task.count({ where: { userId } });
+    if (taskCount >= 50) {
+      return res.status(401).json({ error: "You can't have more than 50 tasks" });
+    }
     const newTask = await Task.create({
       title,
       description,
       status,
       userId,
-      fileUrl: fileAbsolutePath, 
+      dueDateTime, // Include the dueDateTime from the request body
+      fileUrl: fileAbsolutePath,
     });
-
     res.status(201).json(newTask);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error creating task' });
   }
 });
+
 //Read Tasks
 router.get('/tasks', authenticateToken, async (req, res) => {
   const userId = req.user.userId; 
@@ -73,12 +74,15 @@ router.put('/tasks/:taskNumber', authenticateToken, upload.single('file'), async
       description: description || Sequelize.literal('description'),
       status: status || Sequelize.literal('status'),
     };
+    if (status === 'true') {
+      updateValues.completionDateTime = new Date();
+    }
     if (req.file) {
       updateValues.fileUrl = req.file.path;
     }
     const [updatedCount] = await Task.update(
       updateValues,
-      {where: { userId, taskNumber },}
+      { where: { userId, taskNumber } }
     );
     if (updatedCount === 0) {
       return res.status(404).json({ error: 'Task not found' });
@@ -89,6 +93,7 @@ router.put('/tasks/:taskNumber', authenticateToken, upload.single('file'), async
     res.status(500).json({ error: 'Error updating task' });
   }
 });
+
 
 //Update Tasks - With PATCH
 // router.patch('/tasks/:taskNumber', authenticateToken, upload.single('file'), async (req, res) => {

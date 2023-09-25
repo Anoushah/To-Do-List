@@ -2,7 +2,11 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 
+function generateUUID() {
+  return uuidv4();
+}
 
 passport.use(
   new GoogleStrategy(
@@ -16,13 +20,16 @@ passport.use(
         const existingUser = await User.findOne({ where: { email: profile.emails[0].value } });
 
         if (existingUser) {
+          existingUser.uuid = generateUUID(); 
+          await existingUser.save();
           const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
           return done(null, { user: existingUser, token });
         }
 
         const newUser = await User.create({
           email: profile.emails[0].value,
-          username: profile.displayName
+          username: profile.displayName,
+          uuid: generateUUID(),
         });
 
         const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });

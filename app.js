@@ -13,12 +13,16 @@ const countTasks = require('./reports/countTasks');
 const avgTasks = require('./reports/averageTasks');
 const maxTasks = require('./reports/maxTasks');
 const openedTasks = require('./reports/openedTasks');
+const overdueTasks = require('./reports/overdueTasks');
 const similarTasks = require('./algorithms/similarTasks');
+const resetPass = require('./passwordReset');
 app.use('/reports', countTasks);
 app.use('/reports', avgTasks);
 app.use('/reports', maxTasks);
 app.use('/reports', openedTasks);
+app.use('/reports', overdueTasks);
 app.use('/algorithms', similarTasks);
+//app.use('/', resetPass);
 app.use('/', commonRoutes);
 
 require('dotenv').config();

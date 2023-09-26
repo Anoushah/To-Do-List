@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../config');
+const sequelize = require('../config/config');
 const User = require('./user');
 
 const Task = sequelize.define('task', {

@@ -4,12 +4,15 @@ const session = require('express-session');
 const passport = require('passport');
 const sequelize = require('./src/config/config');
 const routes = require('./src/routes');
+const logger = require('./logger');
+const logRequestResponse = require('./src/middleware/loggerMiddleware'); 
 require('dotenv').config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
+app.use(logRequestResponse);
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

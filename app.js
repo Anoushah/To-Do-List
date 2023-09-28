@@ -4,7 +4,6 @@ const session = require('express-session');
 const passport = require('passport');
 const sequelize = require('./src/config/config');
 const routes = require('./src/routes');
-const logger = require('./logger');
 const logRequestResponse = require('./src/middleware/loggerMiddleware'); 
 require('dotenv').config();
 

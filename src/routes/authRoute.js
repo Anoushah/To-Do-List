@@ -31,7 +31,7 @@ router.get('/verify', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
+//Google Authentication
 router.get(
   '/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })

@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const User = require('./models/user');
+const User = require('./src/models/user');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
+
+const dbuser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', 
+  service: "gmail",
   auth: {
-    user: '-------',
-    pass: '-------',
+    user: dbuser,
+    pass: dbPassword,
   },
 });
 
@@ -32,7 +36,7 @@ router.post('/forgot-password', async (req, res) => {
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     const mailOptions = {
-      from: '-----',
+      from: dbuser,
       to: email,
       subject: 'Password Reset',
       text: `Click the following link to reset your password: ${resetLink}`,
@@ -63,7 +67,9 @@ router.post('/reset-password', async (req, res) => {
       return res.status(404).json({ error: 'Invalid or expired token' });
     }
 
-    user.password = newPassword;
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
     user.resetToken = null;
     await user.save();
 

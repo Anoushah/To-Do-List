@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const sequelize = require('../config');
+const sequelize = require('../config/config');
 
 const User = sequelize.define('user', {
   email: {
@@ -14,6 +14,18 @@ const User = sequelize.define('user', {
   password: {
     type: Sequelize.STRING,
     allowNull: true,
+  },
+  resetToken: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: true,
+  },
+  isVerified: {
+    type: Sequelize.DataTypes.BOOLEAN,
+    defaultValue: false, 
+  },
+  verificationToken: {
+    type: Sequelize.DataTypes.STRING,
+    allowNull: true, 
   }
 }, {
   tableName: 'users',

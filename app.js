@@ -39,7 +39,7 @@ const swaggerOptions = {
     servers: [
       {
         url: 'http://localhost:1250', 
-        description: 'Local development server',
+        description: 'Server',
       },
     ],
   },

@@ -19,47 +19,6 @@ const transporter = nodemailer.createTransport({
     pass: dbPassword,
   },
 });
-// Swagger JSDoc for Signup
-/**
- * @swagger
- * /auth/signup:
- *   post:
- *     summary: User registration.
- *     description: Register a new user.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               username:
- *                 type: string
- *               password:
- *                 type: string
- *             required:
- *               - email
- *               - username
- *               - password
- *     responses:
- *       201:
- *         description: User registered successfully.
- *       400:
- *         description: Registration failed.
- *       409:
- *         description: Email address already in use.
- *     tags:
- *       - Authentication
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
 async function signup(req, res) {
   const { email, username, password } = req.body;
 
@@ -98,45 +57,6 @@ async function signup(req, res) {
     res.status(400).json({ error: 'Registration failed' });
   }
 }
-
-// Swagger JSDoc for Login
-/**
- * @swagger
- * /auth/login:
- *   post:
- *     summary: User login.
- *     description: Authenticate a user with their credentials.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *             required:
- *               - email
- *               - password
- *     responses:
- *       200:
- *         description: Login successful.
- *       401:
- *         description: Please sign up first, Email not verified, or Invalid password.
- *       500:
- *         description: Internal server error.
- *     tags:
- *       - Authentication
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
 
 async function login(req, res) {
   const { email, password } = req.body;

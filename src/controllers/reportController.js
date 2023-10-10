@@ -6,31 +6,7 @@ const nodemailer = require('nodemailer');
 
 const dbuser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
-/**
- * @swagger
- * tags:
- *   name: Reports
- *   description: Endpoints for generating reports and reminders
- */
 
-/**
- * @swagger
- * /reports/average-tasks:
- *   get:
- *     summary: Calculate the average number of tasks completed per day.
- *     description: Calculates the average number of tasks completed per day by a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Average tasks calculation successful.
- *       500:
- *         description: Error calculating average tasks.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
 async function calculateAverageTasks(userId) {
   try {
     const user = await User.findByPk(userId);
@@ -50,24 +26,7 @@ async function calculateAverageTasks(userId) {
     throw error;
   }
 }
-/**
- * @swagger
- * /reports/count-tasks:
- *   get:
- *     summary: Calculate the total, completed, and remaining tasks for a user.
- *     description: Calculates the total, completed, and remaining tasks for a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Task counts calculation successful.
- *       500:
- *         description: Error calculating task counts.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
+
 async function calculateCountTasks(userId) {
   try {
     const totalTasks = await Task.count({ where: { userId } });
@@ -79,24 +38,6 @@ async function calculateCountTasks(userId) {
     throw error;
   }
 }
-/**
- * @swagger
- * /reports/max-tasks:
- *   get:
- *     summary: Calculate the date with the most completed tasks for a user.
- *     description: Calculates the date with the most completed tasks for a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Max tasks calculation successful.
- *       500:
- *         description: Error calculating max tasks.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
 async function calculateMaxTasks(userId) {
   try {
     const result = await Task.findOne({
@@ -124,24 +65,7 @@ async function calculateMaxTasks(userId) {
     throw error;
   }
 }
-/**
- * @swagger
- * /reports/opened-tasks:
- *   get:
- *     summary: Calculate the number of tasks opened on each day of the week.
- *     description: Calculates the number of tasks opened on each day of the week by a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Opened tasks calculation successful.
- *       500:
- *         description: Error calculating opened tasks.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
+
 async function calculateOpenedTasks(userId) {
   try {
     const openedTasks = await Task.findAll({
@@ -161,24 +85,7 @@ async function calculateOpenedTasks(userId) {
     throw error;
   }
 }
-/**
- * @swagger
- * /reports/overdue-tasks:
- *   get:
- *     summary: Calculate the number of overdue tasks for a user.
- *     description: Calculates the number of overdue tasks for a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Overdue tasks calculation successful.
- *       500:
- *         description: Error calculating overdue tasks.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
+
 async function calculateOverdueTasks(userId) {
   try {
     const currentDate = new Date();
@@ -197,24 +104,6 @@ async function calculateOverdueTasks(userId) {
     throw error;
   }
 }
-/**
- * @swagger
- * /reports/similar-tasks:
- *   get:
- *     summary: Find and compare similar tasks for a user.
- *     description: Finds and compares similar tasks for a user.
- *     tags: [Reports]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Similar tasks calculation successful.
- *       500:
- *         description: Error fetching and comparing tasks.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
 async function calculateSimilarTasks(userId) {
     try {
       const tasks = await Task.findAll({ where: { userId } });
@@ -262,22 +151,7 @@ async function calculateSimilarTasks(userId) {
         pass: dbPassword,
     },
   });
-/**
- * @swagger
- * /reports/send-daily-reminders:
- *   get:
- *     summary: Send daily task reminders to users.
- *     description: Sends daily task reminders to users for their tasks due on the current day.
- *     tags: [Reports]
- *     responses:
- *       200:
- *         description: Daily reminders sent successfully.
- *       500:
- *         description: Error sending daily reminders.
- *
- * @param {express.Request} req - The HTTP request object.
- * @param {express.Response} res - The HTTP response object.
- */
+
   async function sendDailyReminders() {
     try {
       const currentDate = new Date();

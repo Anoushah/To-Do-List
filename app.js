@@ -9,6 +9,7 @@ const passport = require('passport');
 const sequelize = require('./src/config/config');
 const routes = require('./src/routes');
 const logRequestResponse = require('./src/middleware/loggerMiddleware');
+const errorHandler = require('./errorHandler');
 require('dotenv').config();
 
 app.use(express.json());
@@ -52,16 +53,6 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-process.on('uncaughtException', (err) => {
-  console.error('Unhandled Exception:', err);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Promise Rejection:', err);
-  process.exit(1);
-});
-
 cron.schedule('0 0 * * *', () => {
   sendDailyReminders()
     .then(() => {
@@ -81,6 +72,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/login', (req, res) => {
   res.sendFile(__dirname + '/login.html');
 });
+app.use(errorHandler);
 
 const port = process.env.PORT || 1250;
 app.listen(port, () => {

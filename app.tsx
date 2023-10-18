@@ -1,16 +1,20 @@
-const express = require('express');
+import express, { Express, Request, Response } from 'express';
+import cron from 'node-cron';
+import sendDailyReminders from './src/controllers/daily-reminders';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import session from 'express-session';
+import passport from 'passport';
+import sequelize from './src/config/config';
+import routes from './src/routes';
+import logRequestResponse from './src/middleware/loggerMiddleware';
+import errorHandler from './errorHandler';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const app = express();
-const cron = require('node-cron');
-const sendDailyReminders = require('./src/controllers/daily-reminders');
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-const session = require('express-session');
-const passport = require('passport');
-const sequelize = require('./src/config/config');
-const routes = require('./src/routes');
-const logRequestResponse = require('./src/middleware/loggerMiddleware');
-const errorHandler = require('./errorHandler');
-require('dotenv').config();
+app.use(express.json());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -20,7 +24,7 @@ app.use(logRequestResponse);
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'thekeyisverysecret',
     resave: false,
     saveUninitialized: true,
   })
@@ -58,7 +62,7 @@ cron.schedule('0 0 * * *', () => {
     .then(() => {
       console.log('Scheduled daily reminders executed successfully');
     })
-    .catch((error) => {
+    .catch((error: Error) => {
       console.error('Error executing scheduled daily reminders:', error);
     });
 });
@@ -69,14 +73,15 @@ app.use('/', routes.resetPass);
 app.use('/', routes.authRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/login', (req, res) => {
+app.get('/login', (req: Request, res: Response) => {
   res.sendFile(__dirname + '/login.html');
 });
+
 app.use(errorHandler);
 
-const port = process.env.PORT || 1250;
+const port: number = Number(process.env.PORT) || 1250;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-module.exports = app;
+export default app;

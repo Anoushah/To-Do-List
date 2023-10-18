@@ -1,20 +1,20 @@
-const { Op } = require('sequelize');
-const Task = require('../models/task'); 
-const User = require('../models/user'); 
-const nodemailer = require('nodemailer');
+import { Op, WhereOptions, ModelCtor } from 'sequelize';
+import Task from '../models/task'; 
+import User from '../models/user';
+import nodemailer from 'nodemailer';
 
-const dbuser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const dbuser: string | undefined = process.env.DB_USER;
+const dbPassword: string | undefined = process.env.DB_PASSWORD;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: dbuser,
-    pass: dbPassword,
+    user: dbuser || '',
+    pass: dbPassword || '',
   },
 });
 
-async function sendDailyReminders() {
+async function sendDailyReminders(): Promise<void> {
   try {
     const currentDate = new Date();
 
@@ -28,15 +28,15 @@ async function sendDailyReminders() {
         dueDateTime: {
           [Op.between]: [startOfDay, endOfDay],
         },
-      },
-      include: User,
+      } as WhereOptions,
+      include: User as ModelCtor<User>,
     });
 
     for (const task of tasks) {
-      const user = task.User;
-      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${user.resetToken}`;
+      const user = (task as Task & { User: User }).User;
+      const resetLink = `${process.env.FRONTEND_URL || ''}/reset-password?token=${user.resetToken}`;
       const mailOptions = {
-        from: dbuser,
+        from: dbuser || '',
         to: user.email,
         subject: 'Task Reminder',
         text: `Hi ${user.username},\n\nYou have a task due today: ${task.title}\n\nClick the following link for more details: ${resetLink}`,
@@ -51,12 +51,4 @@ async function sendDailyReminders() {
   }
 }
 
-// Uncomment the following lines if you want to execute the function immediately
-// sendDailyReminders()
-//   .then(() => process.exit(0))
-//   .catch((error) => {
-//     console.error('Error sending daily reminders:', error);
-//     process.exit(1);
-//   });
-
-module.exports = sendDailyReminders;
+export default sendDailyReminders;

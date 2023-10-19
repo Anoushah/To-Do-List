@@ -1,25 +1,27 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const passport = require('../google_Auth/passport-config'); // Import the Passport configuration
-const nodemailer = require('nodemailer');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import User from '../models/user';
+import nodemailer from 'nodemailer';
 
-const dbuser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const dbuser: string | undefined = process.env.DB_USER;
+const dbPassword: string | undefined = process.env.DB_PASSWORD;
 
-function generateVerificationToken() {
-  const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+function generateVerificationToken(): string {
+  const token: string =
+    Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   return token;
 }
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: dbuser,
-    pass: dbPassword,
+    user: dbuser || '',
+    pass: dbPassword || '',
   },
 });
-async function signup(req, res) {
+
+async function signup(req: Request, res: Response) {
   const { email, username, password } = req.body;
 
   try {
@@ -37,13 +39,13 @@ async function signup(req, res) {
       email,
       username,
       password: hashedPassword,
-      isVerified: false,
+      isVerified: false, // Removed quotes
       verificationToken,
     });
 
     const verificationLink = `http://localhost:1250/verify?token=${verificationToken}`;
     const mailOptions = {
-      from: dbuser,
+      from: dbuser || '',
       to: newUser.email,
       subject: 'Account Verification',
       text: `Click the following link to verify your email: ${verificationLink}`,
@@ -58,7 +60,7 @@ async function signup(req, res) {
   }
 }
 
-async function login(req, res) {
+async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
   try {
@@ -69,16 +71,18 @@ async function login(req, res) {
     }
 
     if (!user.isVerified) {
-      return res.status(401).json({ error: 'Email not verified. Please check your email for a verification link.' });
+      return res
+        .status(401)
+        .json({ error: 'Email not verified. Please check your email for a verification link.' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password); // Added await
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '', { expiresIn: '1h' });
     res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error(error);
@@ -86,8 +90,4 @@ async function login(req, res) {
   }
 }
 
-module.exports = {
-  signup,
-  login,
-};
-
+export { signup, login };

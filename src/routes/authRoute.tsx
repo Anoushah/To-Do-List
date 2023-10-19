@@ -1,27 +1,33 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+import passport from 'passport';
+import { signup, login } from '../controllers/authController';
+import User from '../models/user';
+
 const router = express.Router();
-const passport = require('passport');
-const authController = require('../controllers/authController'); 
-const User = require('../models/user'); 
 
 // Signup Route
-router.post('/signup', authController.signup);
+router.post('/signup', signup);
 
 // Login Route
-router.post('/login', authController.login);
+router.post('/login', login);
 
 // Verification Route
-router.get('/verify', async (req, res) => {
-  const { token } = req.query;
+// Verification Route
+router.get('/verify', async (req: Request, res: Response) => {
+  const { token } = req.query as { token: string };
 
   try {
-    const user = await User.findOne({ where: { verificationToken: token } });
+    const user = await User.findOne({
+      where: {
+        verificationToken: token,
+      },
+    });
 
     if (!user) {
       return res.status(404).json({ error: 'Verification token not found' });
     }
 
-    user.isVerified = true;
+    user.isVerified = 'true';
     user.verificationToken = null;
     await user.save();
 
@@ -31,7 +37,8 @@ router.get('/verify', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-//Google Authentication
+
+// Google Authentication
 router.get(
   '/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
@@ -40,9 +47,9 @@ router.get(
 router.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.redirect('/');
   }
 );
 
-module.exports = router;
+export default router;

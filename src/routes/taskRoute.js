@@ -1,8 +1,9 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+import authenticateToken from '../middleware/authMiddleware';
+import multer from 'multer';
+import taskController from '../controllers/taskController';
+
 const router = express.Router();
-const authenticateToken = require('../middleware/authMiddleware');
-const multer = require('multer');
-const taskController = require('../controllers/taskController');
 const upload = multer({ dest: 'D:/To-Do List/uploads/' });
 
 // Create a new task
@@ -20,4 +21,4 @@ router.put('/tasks/:taskNumber', authenticateToken, upload.single('file'), taskC
 // Delete a task
 router.delete('/tasks/:taskNumber', authenticateToken, taskController.deleteTask);
 
-module.exports = router;
+export default router;

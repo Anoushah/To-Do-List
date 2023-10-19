@@ -1,9 +1,9 @@
-const taskRoutes = require('./taskRoute');
-const reportRoutes = require('./reportRoute');
-const resetPass = require('../../passwordReset');
-const authRoutes = require('./authRoute');
+import taskRoutes from './taskRoute';
+import reportRoutes from './reportRoute';
+import resetPass from '../../passwordReset';
+import authRoutes from './authRoute';
 
-module.exports = {
+export {
   taskRoutes,
   reportRoutes,
   resetPass,

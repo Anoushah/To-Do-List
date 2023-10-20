@@ -1,15 +1,14 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const app = require('../../app');
-const Task = require('../models/task');
-const expect = chai.expect;
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import app from '../../app';
+import { expect } from 'chai';
 
 chai.use(chaiHttp);
 
 describe('Task Controller', () => {
-  let authToken;
+  let authToken: string;
 
-  before((done) => {
+  before((done: () => void) => {
     chai
       .request(app)
       .post('/auth/login')
@@ -24,7 +23,7 @@ describe('Task Controller', () => {
   });
 
   describe('createTask', () => {
-    it('should create a new task', (done) => {
+    it('should create a new task', (done: () => void) => {
       chai
         .request(app)
         .post('/tasks')
@@ -42,7 +41,7 @@ describe('Task Controller', () => {
         });
     });
 
-    it('should return an error if the user has too many tasks', (done) => {
+    it('should return an error if the user has too many tasks', (done: () => void) => {
       chai
         .request(app)
         .post('/tasks')
@@ -62,7 +61,7 @@ describe('Task Controller', () => {
   });
 
   describe('getAllTasks', () => {
-    it('should get all tasks for the authenticated user', (done) => {
+    it('should get all tasks for the authenticated user', (done: () => void) => {
       chai
         .request(app)
         .get('/tasks')
@@ -75,7 +74,7 @@ describe('Task Controller', () => {
   });
 
   describe('updateTask', () => {
-    it('should update a task', (done) => {
+    it('should update a task', (done: () => void) => {
       chai
         .request(app)
         .put('/tasks/taskNumberToUpdate')
@@ -92,7 +91,7 @@ describe('Task Controller', () => {
         });
     });
 
-    it('should return an error if the task does not exist', (done) => {
+    it('should return an error if the task does not exist', (done: () => void) => {
       chai
         .request(app)
         .put('/tasks/nonExistentTaskNumber')
@@ -111,7 +110,7 @@ describe('Task Controller', () => {
   });
 
   describe('deleteTask', () => {
-    it('should delete a task', (done) => {
+    it('should delete a task', (done: () => void) => {
       chai
         .request(app)
         .delete('/tasks/taskNumberToDelete')
@@ -122,7 +121,7 @@ describe('Task Controller', () => {
         });
     });
 
-    it('should return an error if the task does not exist', (done) => {
+    it('should return an error if the task does not exist', (done: () => void) => {
       chai
         .request(app)
         .delete('/tasks/nonExistentTaskNumber')

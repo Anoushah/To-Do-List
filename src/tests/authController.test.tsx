@@ -1,19 +1,19 @@
-const chai = require('chai');
-const app = require('../../app');
-const request = require('supertest');
-const expect = chai.expect;
+import chai, { expect } from 'chai';
+import app from '../../app';
+import request from 'supertest';
+import { before, after } from 'mocha';
 
 describe('Authentication Controller', () => {
-  let server;
+  let server: any;
 
-  before((done) => {
+  before((done: () => void) => {
     server = app.listen(0, () => {
-      const port = server.address().port;
+      const port = (server.address() as any).port;
       done();
     });
   });
 
-  after((done) => {
+  after((done: () => void) => {
     server.close(() => {
       done();
     });
@@ -29,8 +29,8 @@ describe('Authentication Controller', () => {
           password: '12345678',
         })
         .expect(201)
-        .end((err, res) => {
-          expect(res.body.message).to.equal('User registered successfully');
+        .end((err: any, res: any) => {
+          expect(res.body.message).to.equal('User registered successfully'); // Corrected line
           done();
         });
     });
@@ -44,8 +44,8 @@ describe('Authentication Controller', () => {
           password: '12345678',
         })
         .expect(400)
-        .end((err, res) => {
-          expect(res.body.error).to.equal('Email address already in use');
+        .end((err: any, res: any) => {
+          expect(res.body.error).to.equal('Email address already in use'); // Corrected line
           done();
         });
     });
@@ -60,8 +60,8 @@ describe('Authentication Controller', () => {
           password: '12345678',
         })
         .expect(200)
-        .end((err, res) => {
-          expect(res.body.message).to.equal('Login successful');
+        .end((err: any, res: any) => {
+          expect(res.body.message).to.equal('Login successful'); // Corrected line
           expect(res.body.token).to.be.a('string');
           done();
         });
@@ -75,8 +75,8 @@ describe('Authentication Controller', () => {
           password: '12345678',
         })
         .expect(401)
-        .end((err, res) => {
-          expect(res.body.error).to.equal('Please sign up first');
+        .end((err: any, res: any) => {
+          expect(res.body.error).to.equal('Please sign up first'); // Corrected line
           done();
         });
     });

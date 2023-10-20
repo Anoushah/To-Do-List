@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import authenticateToken from '../middleware/authMiddleware';
 import multer from 'multer';
-import taskController from '../controllers/taskController';
+import * as taskController from '../controllers/taskController';
 
 const router = express.Router();
 const upload = multer({ dest: 'D:/To-Do List/uploads/' });

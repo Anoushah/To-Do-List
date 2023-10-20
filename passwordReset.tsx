@@ -1,26 +1,27 @@
-const express = require('express');
-const router = express.Router();
-const User = require('./src/models/user');
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const bcrypt = require('bcrypt');
+import express, { Request, Response } from 'express';
+import User from './src/models/user';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
 
-const dbuser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const dbuser = process.env.DB_USER as string;
+const dbPassword = process.env.DB_PASSWORD as string;
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: dbuser,
     pass: dbPassword,
   },
 });
 
-function generateResetToken() {
+function generateResetToken(): string {
   return crypto.randomBytes(20).toString('hex');
 }
 
-router.post('/forgot-password', async (req, res) => {
+const router = express.Router();
+
+router.post('/forgot-password', async (req: Request, res: Response) => {
   const { email } = req.body;
 
   try {
@@ -57,7 +58,7 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
 
   try {
@@ -70,7 +71,7 @@ router.post('/reset-password', async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
-    user.resetToken = null;
+    user.resetToken = undefined;
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
@@ -80,4 +81,4 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
